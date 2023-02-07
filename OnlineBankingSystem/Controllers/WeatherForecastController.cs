@@ -4,8 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace OnlineBankingSystem.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
-    [Authorize]
+    [Route("api/v{version:apiVersion}/[controller]")]
+    [ApiVersion("1.0")]
     public class WeatherForecastController : ControllerBase
     {
         private static readonly string[] Summaries = new[]
