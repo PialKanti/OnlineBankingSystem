@@ -1,4 +1,7 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc.Versioning;
+using OnlineBankingSystem.Dtos;
+using OnlineBankingSystem.Entities;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +23,14 @@ builder.Services.AddVersionedApiExplorer(setup =>
     setup.GroupNameFormat = "'v'VVV";
     setup.SubstituteApiVersionInUrl = true;
 });
+
+var mapperConfig = new MapperConfiguration(configuration =>
+{
+    configuration.CreateMap<RegisterUserDto, ApplicationUser>();
+});
+
+IMapper mapper = mapperConfig.CreateMapper();
+builder.Services.AddSingleton(mapper);
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
