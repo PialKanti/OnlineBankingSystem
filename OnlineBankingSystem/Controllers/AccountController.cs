@@ -18,6 +18,7 @@ namespace OnlineBankingSystem.Controllers
         }
 
         [HttpPost]
+        [Route("register")]
         public async Task<IActionResult> Register([FromBody]RegisterUserDto userDto)
         {
             var result = await _repository.Register(userDto);
