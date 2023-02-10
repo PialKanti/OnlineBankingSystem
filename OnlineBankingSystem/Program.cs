@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using OnlineBankingSystem.Domain;
 using OnlineBankingSystem.Dtos;
 using OnlineBankingSystem.Entities;
+using OnlineBankingSystem.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -48,6 +49,8 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Password.RequiredLength = 6;
     options.Password.RequiredUniqueChars = 1;
 });
+
+builder.Services.AddScoped<IAccountRepository<IdentityResult>, AccountRepository>();
 
 var mapperConfig = new MapperConfiguration(configuration =>
 {
