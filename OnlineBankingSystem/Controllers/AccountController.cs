@@ -18,11 +18,11 @@ namespace OnlineBankingSystem.Controllers
         }
 
         [HttpPost]
-        public ActionResult<IdentityResult> Register([FromBody]RegisterUserDto userDto)
+        public async Task<IActionResult> Register([FromBody]RegisterUserDto userDto)
         {
-            var result = _repository.Register(userDto);
+            var result = await _repository.Register(userDto);
 
-            if(!result.IsCompleted)
+            if (!result.Succeeded)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
