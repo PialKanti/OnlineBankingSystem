@@ -32,7 +32,7 @@ namespace OnlineBankingSystem.Repositories
 
         private async Task AssignRole(ApplicationUser user, string roleName)
         {
-            var role = _roleManager.FindByNameAsync(roleName);
+            var role = await _roleManager.FindByNameAsync(roleName);
             if (role != null)
             {
                 await _userManager.AddToRoleAsync(user, roleName);
@@ -43,20 +43,20 @@ namespace OnlineBankingSystem.Repositories
             }
         }
 
-        public Task<ApplicationUser>? GetByEmail(string email)
+        public async Task<ApplicationUser?> GetByEmail(string email)
         {
             if (string.IsNullOrEmpty(email))
                 return null;
 
-            return _userManager.FindByEmailAsync(email);
+            return await _userManager.FindByEmailAsync(email);
         }
 
-        public Task<ApplicationUser>? GetByUserName(string username)
+        public async Task<ApplicationUser?> GetByUserName(string username)
         {
             if (string.IsNullOrEmpty(username))
                 return null;
 
-            return _userManager.FindByNameAsync(username);
+            return await _userManager.FindByNameAsync(username);
         }
     }
 }

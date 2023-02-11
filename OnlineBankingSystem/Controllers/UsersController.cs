@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using OnlineBankingSystem.Dtos;
+using OnlineBankingSystem.Entities;
 using OnlineBankingSystem.Repositories;
 
 namespace OnlineBankingSystem.Controllers
@@ -11,9 +12,9 @@ namespace OnlineBankingSystem.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly IUsersRepository<IdentityResult> _repository;
+        private readonly IUsersRepository<ApplicationUser> _repository;
 
-        public UsersController(IUsersRepository<IdentityResult> repository)
+        public UsersController(IUsersRepository<ApplicationUser> repository)
         {
             _repository = repository;
         }
@@ -21,12 +22,12 @@ namespace OnlineBankingSystem.Controllers
         [HttpPost]        
         public async Task<IActionResult> Create([FromBody]RegisterUserDto userDto)
         {
-            if(_repository.GetByUserName(userDto.UserName) != null)
+            if(_repository.GetByUserName(userDto.UserName).Result != null)
             {
                 return BadRequest(new { error = "User username already exists" });
             }
 
-            if(_repository.GetByEmail(userDto.Email) != null)
+            if(_repository.GetByEmail(userDto.Email).Result != null)
             {
                 return BadRequest(new { error = "User email already exists" });
             }
