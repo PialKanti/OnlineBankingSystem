@@ -21,7 +21,17 @@ namespace OnlineBankingSystem.Controllers
         [HttpPost]        
         public async Task<IActionResult> Create([FromBody]RegisterUserDto userDto)
         {
-            var result = await _repository.Register(userDto);
+            if(_repository.GetByUserName(userDto.UserName) != null)
+            {
+                return BadRequest(new { error = "User username already exists" });
+            }
+
+            if(_repository.GetByEmail(userDto.Email) != null)
+            {
+                return BadRequest(new { error = "User email already exists" });
+            }
+
+            var result = await _repository.Create(userDto);
 
             if (!result.Succeeded)
             {

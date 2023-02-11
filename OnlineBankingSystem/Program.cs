@@ -50,7 +50,7 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Password.RequiredUniqueChars = 1;
 });
 
-builder.Services.AddScoped<IUsersRepository<IdentityResult>, UsersRepository>();
+builder.Services.AddScoped<IUsersRepository<ApplicationUser>, UsersRepository>();
 
 var mapperConfig = new MapperConfiguration(configuration =>
 {
