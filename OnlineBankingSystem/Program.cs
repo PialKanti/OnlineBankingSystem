@@ -50,7 +50,7 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Password.RequiredUniqueChars = 1;
 });
 
-builder.Services.AddScoped<IAccountRepository<IdentityResult>, AccountRepository>();
+builder.Services.AddScoped<IUsersRepository<IdentityResult>, UsersRepository>();
 
 var mapperConfig = new MapperConfiguration(configuration =>
 {
@@ -59,6 +59,11 @@ var mapperConfig = new MapperConfiguration(configuration =>
 
 IMapper mapper = mapperConfig.CreateMapper();
 builder.Services.AddSingleton(mapper);
+
+builder.Services.Configure<RouteOptions>(options =>
+{
+    options.LowercaseUrls = true;
+});
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

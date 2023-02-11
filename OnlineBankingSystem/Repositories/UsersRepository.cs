@@ -5,12 +5,12 @@ using OnlineBankingSystem.Entities;
 
 namespace OnlineBankingSystem.Repositories
 {
-    public class AccountRepository : IAccountRepository<IdentityResult>
+    public class UsersRepository : IUsersRepository<IdentityResult>
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IMapper _mapper;
 
-        public AccountRepository(UserManager<ApplicationUser> userManager, IMapper mapper)
+        public UsersRepository(UserManager<ApplicationUser> userManager, IMapper mapper)
         {
             _userManager = userManager;
             _mapper = mapper;

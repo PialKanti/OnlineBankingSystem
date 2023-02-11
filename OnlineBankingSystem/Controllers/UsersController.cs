@@ -6,20 +6,20 @@ using OnlineBankingSystem.Repositories;
 
 namespace OnlineBankingSystem.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v{version:apiVersion}/[controller]")]
+    [ApiVersion("1.0")]
     [ApiController]
-    public class AccountController : ControllerBase
+    public class UsersController : ControllerBase
     {
-        private readonly IAccountRepository<IdentityResult> _repository;
+        private readonly IUsersRepository<IdentityResult> _repository;
 
-        public AccountController(IAccountRepository<IdentityResult> repository)
+        public UsersController(IUsersRepository<IdentityResult> repository)
         {
             _repository = repository;
         }
 
-        [HttpPost]
-        [Route("register")]
-        public async Task<IActionResult> Register([FromBody]RegisterUserDto userDto)
+        [HttpPost]        
+        public async Task<IActionResult> Create([FromBody]RegisterUserDto userDto)
         {
             var result = await _repository.Register(userDto);
 

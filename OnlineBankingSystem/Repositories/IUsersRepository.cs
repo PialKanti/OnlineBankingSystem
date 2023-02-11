@@ -2,7 +2,7 @@
 
 namespace OnlineBankingSystem.Repositories
 {
-    public interface IAccountRepository<T>
+    public interface IUsersRepository<T>
     {
         Task<T> Register(RegisterUserDto userDto);
     }
