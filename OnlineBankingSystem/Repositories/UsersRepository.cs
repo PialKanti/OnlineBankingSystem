@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using OnlineBankingSystem.Dtos;
 using OnlineBankingSystem.Entities;
 using OnlineBankingSystem.Enums;
+using OnlineBankingSystem.Responses;
 
 namespace OnlineBankingSystem.Repositories
 {
@@ -43,7 +44,7 @@ namespace OnlineBankingSystem.Repositories
             }
         }
 
-        public async Task<ApplicationUser?> GetByEmail(string email)
+        public async Task<ApplicationUser?> GetByEmail(string? email)
         {
             if (string.IsNullOrEmpty(email))
                 return null;
@@ -51,12 +52,23 @@ namespace OnlineBankingSystem.Repositories
             return await _userManager.FindByEmailAsync(email);
         }
 
-        public async Task<ApplicationUser?> GetByUserName(string username)
+        public async Task<ApplicationUser?> GetByUserName(string? username)
         {
             if (string.IsNullOrEmpty(username))
                 return null;
 
             return await _userManager.FindByNameAsync(username);
+        }
+
+        public async Task<bool> VerifyPassword(ApplicationUser user, string? password)
+        {
+            if(user == null)
+                return false;
+
+            if (string.IsNullOrEmpty(password))
+                return false;
+
+            return await _userManager.CheckPasswordAsync(user, password);
         }
     }
 }

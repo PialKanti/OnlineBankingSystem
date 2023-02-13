@@ -1,9 +1,13 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using OnlineBankingSystem.Domain;
 using OnlineBankingSystem.Dtos;
 using OnlineBankingSystem.Entities;
 using OnlineBankingSystem.Repositories;
+using OnlineBankingSystem.Responses;
+using OnlineBankingSystem.Services;
 
 namespace OnlineBankingSystem.Controllers
 {
@@ -12,11 +16,15 @@ namespace OnlineBankingSystem.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
+        private readonly ApplicationDbContext _dbContext;
         private readonly IUsersRepository<ApplicationUser> _repository;
+        private readonly JwtTokenService _tokenService;
 
-        public UsersController(IUsersRepository<ApplicationUser> repository)
+        public UsersController(ApplicationDbContext dbContext, IUsersRepository<ApplicationUser> repository, JwtTokenService tokenService)
         {
+            _dbContext = dbContext;
             _repository = repository;
+            _tokenService = tokenService;
         }
 
         [HttpPost]        
@@ -40,6 +48,34 @@ namespace OnlineBankingSystem.Controllers
             }
 
             return Ok(result);
+        }
+
+        [HttpPost]
+        [Route("authenticate")]
+        public async Task<IActionResult> Authenticate([FromBody] LoginUserDto userDto)
+        {
+            var user = await _repository.GetByUserName(userDto.Username);
+            if (user == null)
+            {
+                return BadRequest("User not found");
+            }
+
+            var isPasswordValid = await _repository.VerifyPassword(user, userDto.Password);
+            if (!isPasswordValid)
+            {
+                return BadRequest("Username/Password wrong");
+            }
+
+            var accessToken = _tokenService.CreateToken(user);
+
+            await _dbContext.SaveChangesAsync();
+
+            return Ok(new AuthenticationResponse
+            {
+                Username = user.UserName,
+                Email = user.Email,
+                Token = accessToken
+            });
         }
     }
 }
