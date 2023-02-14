@@ -4,14 +4,23 @@ using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Microsoft.Extensions.Options;
 using OnlineBankingSystem.Entities;
+using OnlineBankingSystem.Options;
 
 namespace OnlineBankingSystem.Services
 {
     //Todo use Generic for ApplicationUser
     public class JwtTokenService
     {
+        private readonly JwtTokenOptions _options;
         private const int ExpirationMinutes = 30;
+
+        public JwtTokenService(IOptions<JwtTokenOptions> options)
+        {
+            _options = options.Value;
+        }
+
         public string CreateToken(ApplicationUser user)
         {
             var expiration = DateTime.UtcNow.AddMinutes(ExpirationMinutes);
@@ -27,8 +36,8 @@ namespace OnlineBankingSystem.Services
         private JwtSecurityToken CreateJwtToken(List<Claim> claims, SigningCredentials credentials,
             DateTime expiration) =>
             new(
-                "OnlineBankingSystem",
-                "OnlineBankingSystem",
+                _options.ValidIssuer,
+                _options.ValidAudience,
                 claims,
                 expires: expiration,
                 signingCredentials: credentials
@@ -59,7 +68,7 @@ namespace OnlineBankingSystem.Services
         {
             return new SigningCredentials(
                 new SymmetricSecurityKey(
-                    Encoding.UTF8.GetBytes("!SomethingSecret!")
+                    Encoding.UTF8.GetBytes(_options.Key)
                 ),
                 SecurityAlgorithms.HmacSha256
             );

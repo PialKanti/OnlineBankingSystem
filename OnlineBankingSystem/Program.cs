@@ -9,6 +9,7 @@ using Microsoft.OpenApi.Models;
 using OnlineBankingSystem.Domain;
 using OnlineBankingSystem.Dtos;
 using OnlineBankingSystem.Entities;
+using OnlineBankingSystem.Options;
 using OnlineBankingSystem.Repositories;
 using OnlineBankingSystem.Services;
 
@@ -71,6 +72,8 @@ builder.Services.Configure<RouteOptions>(options =>
     options.LowercaseUrls = true;
 });
 
+builder.Services.Configure<JwtTokenOptions>(builder.Configuration.GetSection(JwtTokenOptions.JwtToken));
+
 builder.Services.AddAuthentication(options =>
     {
         options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -85,13 +88,13 @@ builder.Services.AddAuthentication(options =>
             ValidateAudience = true,
             ValidateLifetime = false,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["TokenParameters:ValidIssuer"],
-            ValidAudience = builder.Configuration["TokenParameters:ValidAudience"],
+            ValidIssuer = builder.Configuration["JwtToken:ValidIssuer"],
+            ValidAudience = builder.Configuration["JwtToken:ValidAudience"],
             IssuerSigningKey =
                 new SymmetricSecurityKey(
                     Encoding.UTF8.GetBytes(
                         builder.Configuration[
-                            "TokenParameters:Key"])) //Todo keep IssuerSigningKey in .env file or user secrets
+                            "JwtToken:Key"])) //Todo keep IssuerSigningKey in .env file or user secrets
         });
 
 builder.Services.AddAuthorization();
