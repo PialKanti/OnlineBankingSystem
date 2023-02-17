@@ -9,6 +9,7 @@ using Microsoft.OpenApi.Models;
 using OnlineBankingSystem.Domain;
 using OnlineBankingSystem.Dtos;
 using OnlineBankingSystem.Entities;
+using OnlineBankingSystem.Extensions.DependencyInjection;
 using OnlineBankingSystem.Options;
 using OnlineBankingSystem.Repositories;
 using OnlineBankingSystem.Services;
@@ -42,22 +43,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
-builder.Services.Configure<IdentityOptions>(options =>
-{
-    //User Settings
-    options.User.RequireUniqueEmail = true;
-
-    //Password Settings
-    options.Password.RequireDigit = true;
-    options.Password.RequireLowercase = true;
-    options.Password.RequireUppercase = true;
-    options.Password.RequireNonAlphanumeric = true;
-    options.Password.RequiredLength = 6;
-    options.Password.RequiredUniqueChars = 1;
-});
-
-builder.Services.AddScoped<IUsersRepository<ApplicationUser>, UsersRepository>();
-builder.Services.AddScoped<JwtTokenService, JwtTokenService>();
+builder.Services.AddConfigurationOptions(builder.Configuration);
 
 var mapperConfig = new MapperConfiguration(configuration =>
 {
@@ -67,37 +53,9 @@ var mapperConfig = new MapperConfiguration(configuration =>
 IMapper mapper = mapperConfig.CreateMapper();
 builder.Services.AddSingleton(mapper);
 
-builder.Services.Configure<RouteOptions>(options =>
-{
-    options.LowercaseUrls = true;
-});
+builder.Services.AddAuthServices(builder.Configuration);
 
-builder.Services.Configure<JwtTokenOptions>(builder.Configuration.GetSection(JwtTokenOptions.JwtToken));
-
-builder.Services.AddAuthentication(options =>
-    {
-        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-    })
-    .AddJwtBearer(options =>
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ClockSkew = TimeSpan.Zero,
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = false,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["JwtToken:ValidIssuer"],
-            ValidAudience = builder.Configuration["JwtToken:ValidAudience"],
-            IssuerSigningKey =
-                new SymmetricSecurityKey(
-                    Encoding.UTF8.GetBytes(
-                        builder.Configuration[
-                            "JwtToken:Key"])) //Todo keep IssuerSigningKey in .env file or user secrets
-        });
-
-builder.Services.AddAuthorization();
+builder.Services.AddApplicationServices();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
