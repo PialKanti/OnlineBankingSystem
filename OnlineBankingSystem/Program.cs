@@ -1,18 +1,12 @@
-using System.Text;
 using AutoMapper;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using OnlineBankingSystem.Domain;
 using OnlineBankingSystem.Dtos;
 using OnlineBankingSystem.Entities;
 using OnlineBankingSystem.Extensions.DependencyInjection;
-using OnlineBankingSystem.Options;
-using OnlineBankingSystem.Repositories;
-using OnlineBankingSystem.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
