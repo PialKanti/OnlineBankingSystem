@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.IdentityModel.Tokens;
 using OnlineBankingSystem.Entities;
 using OnlineBankingSystem.Options;
@@ -11,6 +12,27 @@ namespace OnlineBankingSystem.Extensions.DependencyInjection
 {
     public static class ServiceCollectionExtensions
     {
+        public static IServiceCollection AddApiVersioningServices(this IServiceCollection services)
+        {
+            services.AddApiVersioning(option =>
+            {
+                option.DefaultApiVersion = new Microsoft.AspNetCore.Mvc.ApiVersion(1, 0);
+                option.AssumeDefaultVersionWhenUnspecified = true;
+                option.ReportApiVersions = true;
+                option.ApiVersionReader = ApiVersionReader.Combine(new UrlSegmentApiVersionReader(),
+                    new HeaderApiVersionReader("x-api-version"),
+                    new MediaTypeApiVersionReader("x-api-version"));
+            });
+
+            services.AddVersionedApiExplorer(setup =>
+            {
+                setup.GroupNameFormat = "'v'VVV";
+                setup.SubstituteApiVersionInUrl = true;
+            });
+
+            return services;
+        }
+
         public static IServiceCollection AddAuthServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddAuthentication(options =>

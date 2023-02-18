@@ -1,6 +1,5 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using OnlineBankingSystem.Domain;
@@ -13,21 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
-builder.Services.AddApiVersioning(option =>
-{
-    option.DefaultApiVersion = new Microsoft.AspNetCore.Mvc.ApiVersion(1, 0);
-    option.AssumeDefaultVersionWhenUnspecified = true;
-    option.ReportApiVersions = true;
-    option.ApiVersionReader = ApiVersionReader.Combine(new UrlSegmentApiVersionReader(),
-        new HeaderApiVersionReader("x-api-version"),
-        new MediaTypeApiVersionReader("x-api-version"));
-});
-
-builder.Services.AddVersionedApiExplorer(setup =>
-{
-    setup.GroupNameFormat = "'v'VVV";
-    setup.SubstituteApiVersionInUrl = true;
-});
+builder.Services.AddApiVersioningServices();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
