@@ -42,6 +42,9 @@ namespace OnlineBankingSystem.Extensions.DependencyInjection
                     options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
                 })
                 .AddJwtBearer(options =>
+                {
+                    options.RequireHttpsMetadata = true;
+                    options.SaveToken = true;
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         ClockSkew = TimeSpan.Zero,
@@ -53,8 +56,11 @@ namespace OnlineBankingSystem.Extensions.DependencyInjection
                         ValidAudience = configuration["JwtToken:ValidAudience"],
                         IssuerSigningKey =
                             new SymmetricSecurityKey(
-                                Encoding.UTF8.GetBytes(configuration["JwtToken:Key"])) //Todo keep IssuerSigningKey in .env file or user secrets
-                    });
+                                Encoding.UTF8.GetBytes(
+                                    configuration[
+                                        "JwtToken:Key"])) //Todo keep IssuerSigningKey in .env file or user secrets
+                    };
+                });
 
             services.AddAuthorization();
 
