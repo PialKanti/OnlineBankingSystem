@@ -14,6 +14,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddApiVersioningServices();
 
+builder.Services.AddSpaStaticFiles(configuration =>
+{
+    configuration.RootPath = "client-app/dist";
+});
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("OnlineBankingSystemContext"));
@@ -77,9 +82,24 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseStaticFiles();
+if (!app.Environment.IsDevelopment())
+{
+    app.UseSpaStaticFiles();
+}
+
 app.UseAuthentication();
 
 app.UseAuthorization();
+
+app.UseSpa(spa =>
+{
+    spa.Options.SourcePath = "client-app";
+    if (app.Environment.IsDevelopment())
+    {
+        spa.UseProxyToSpaDevelopmentServer("http://localhost:8080");//todo need to update(generic)
+    }
+});
 
 app.MapControllers();
 
